@@ -1,12 +1,8 @@
 import express from "express";
-import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
+import ENV from "./src/config/env.js";
 import connectDB from "./src/config/db.js";
 import routes from "./src/routes/index.js"; // main dynamic router
-
-dotenv.config();
-connectDB();
 
 const app = express();
 
@@ -23,11 +19,24 @@ app.get("/", (req, res) => {
 });
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("MongoDB connected");
-        app.listen(process.env.PORT || 5000, () => {
-            console.log(`Server running on port ${process.env.PORT || 5000}`);
+// Connect DB, then start server
+const startServer = async () => {
+    try {
+        await connectDB(); // Wait for MongoDB connection
+        app.listen(ENV.PORT || 5000, () => {
+            console.log(`Server running on http://localhost:${ENV.PORT}`);
         });
-    })
-    .catch((err) => console.error(err));
+    } catch (error) {
+        console.error("Failed to start server:", error);
+    }
+};
+
+startServer();
+// mongoose.connect(ENV.MONGO_URI)
+//     .then(() => {
+//         console.log("MongoDB connected");
+//         app.listen(ENV.PORT || 5000, () => {
+//             console.log(`Server running on port ${ENV.PORT || 5000}`);
+//         });
+//     })
+//     .catch((err) => console.error(err));

@@ -1,5 +1,5 @@
 import User from "./UserModel.js";
-import jwt from "jsonwebtoken";
+import { generateToken } from "../utils/jwt.js";
 
 class UserService {
     // Register new user
@@ -9,7 +9,7 @@ class UserService {
         if (existingUser) throw new Error("User already exists");
 
         const user = await User.create(userData); // password hashed by pre-save hook
-        const token = this.generateToken(user._id);
+        const token = generateToken(user._id);
 
         return { user, token };
     }
@@ -22,13 +22,8 @@ class UserService {
         const isMatch = await user.comparePassword(password);
         if (!isMatch) throw new Error("Invalid credentials");
 
-        const token = this.generateToken(user._id);
+        const token = generateToken(user._id);
         return { user, token };
-    }
-
-    // Generate JWT
-    generateToken(userId) {
-        return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "1d" });
     }
 }
 

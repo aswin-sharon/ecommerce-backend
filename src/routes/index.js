@@ -17,6 +17,7 @@ const skipFolders = ["config", "routes", "utils", "middlewares"];
 const folders = fs.readdirSync(modulesPath, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory() && !skipFolders.includes(dirent.name))
     .map(dirent => dirent.name);
+console.log(folders);
 
 // Dynamically import routes for each feature folder
 for (const folder of folders) {
