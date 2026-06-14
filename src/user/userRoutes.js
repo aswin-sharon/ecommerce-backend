@@ -1,4 +1,4 @@
-console.log("hittin inside?????");
+console.log("hittin inside????? user routes");
 import express from "express";
 const router = express.Router();
 import UserController from "./UserController.js";

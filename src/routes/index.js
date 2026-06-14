@@ -22,9 +22,6 @@ console.log(folders);
 // Dynamically import routes for each feature folder
 for (const folder of folders) {
     try {
-        console.log("=======", folder);
-        console.log("Importing route:", path.resolve(__dirname, `../${folder}/${folder}Routes.js`));
-
         // Relative path to route file
         const routePath = `../${folder}/${folder}Routes.js`;
         const module = await import(routePath);
