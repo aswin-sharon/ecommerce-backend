@@ -1,73 +1,85 @@
+import BaseController from "../core/BaseController.js";
 import UserService from "./UserService.js";
 
-class UserController {
+class UserController extends BaseController {
     async register(req, res) {
         try {
-            const { user, token } = await UserService.registerUser(req.body);
-            res.status(201).json({ success: true, data: { user, token } });
+            const result = await UserService.registerUser(req.body);
+            return this.success(res, result, 201);
         } catch (err) {
-            res.status(400).json({ success: false, message: err.message });
+            return this.error(res, err);
         }
     }
 
     async login(req, res) {
         try {
-            const { user, token } = await UserService.loginUser(req.body);
-            res.status(200).json({ success: true, data: { user, token } });
+            const result = await UserService.loginUser(req.body);
+            return this.success(res, result);
         } catch (err) {
-            res.status(400).json({ success: false, message: err.message });
+            return this.error(res, err);
         }
     }
 
     async getUserById(req, res) {
         try {
-            const { id } = req.params;
-            const user = await UserService.getUserById(parseInt(id));
-            res.status(200).json({ success: true, data: user });
+            const user = await UserService.getUserById(Number(req.params.id));
+
+            if (!user) {
+                return this.error(res, "User not found", 404);
+            }
+
+            return this.success(res, user);
         } catch (err) {
-            res.status(400).json({ success: false, message: err.message });
+            const statusCode = err.message === "User not found" ? 404 : 400;
+            return this.error(res, err, statusCode);
         }
     }
 
     async getAllUsers(req, res) {
         try {
             const users = await UserService.getAllUsers();
-            res.status(200).json({ success: true, data: users });
+            return this.success(res, users);
         } catch (err) {
-            res.status(400).json({ success: false, message: err.message });
+            return this.error(res, err);
         }
     }
 
     async getUsersByRole(req, res) {
         try {
             const { role } = req.query;
+
             if (!role) {
-                throw new Error("Role query parameter is required");
+                return this.error(res, "Role query parameter is required");
             }
+
             const users = await UserService.getUsersByRole(role);
-            res.status(200).json({ success: true, data: users });
+            return this.success(res, users);
         } catch (err) {
-            res.status(400).json({ success: false, message: err.message });
+            return this.error(res, err);
         }
     }
 
     async updateUser(req, res) {
         try {
-            const { id } = req.params;
-            const user = await UserService.updateUser(parseInt(id), req.body);
-            res.status(200).json({ success: true, data: user });
+            const user = await UserService.updateUser(
+                Number(req.params.id),
+                req.body
+            );
+
+            return this.success(res, user);
         } catch (err) {
-            res.status(400).json({ success: false, message: err.message });
+            const statusCode = err.message === "User not found" ? 404 : 400;
+            return this.error(res, err, statusCode);
         }
     }
 
     async deleteUser(req, res) {
         try {
-            const { id } = req.params;
-            const result = await UserService.deleteUser(parseInt(id));
-            res.status(200).json({ success: true, data: result });
+            const result = await UserService.deleteUser(Number(req.params.id));
+            return this.success(res, result);
         } catch (err) {
-            res.status(400).json({ success: false, message: err.message });
+            const statusCode = err.message === "User not found" ? 404 : 400;
+            return this.error(res, err, statusCode);
         }
     }
 }

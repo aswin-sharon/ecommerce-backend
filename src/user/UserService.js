@@ -2,13 +2,15 @@ import prisma from "../config/prisma.js";
 import { generateToken } from "../utils/jwt.js";
 import { hashPassword, comparePassword } from "../utils/password.js";
 
+const UserDB = prisma.user;
+
 class UserService {
     // Register new user
     async registerUser(userData) {
         const { email, first_name, last_name, password, role } = userData;
 
         // Check if user already exists - simple query with Prisma
-        const existingUser = await prisma.user.findUnique({
+        const existingUser = await UserDB.findUnique({
             where: { email: email.toLowerCase() },
         });
 
@@ -20,7 +22,7 @@ class UserService {
         const hashedPassword = await hashPassword(password);
 
         // Create new user - simple query with Prisma
-        const user = await prisma.user.create({
+        const user = await UserDB.create({
             data: {
                 first_name,
                 last_name,
@@ -41,7 +43,7 @@ class UserService {
     // Login user
     async loginUser({ email, password }) {
         // Find user by email - simple query with Prisma
-        const user = await prisma.user.findUnique({
+        const user = await UserDB.findUnique({
             where: { email: email.toLowerCase() },
         });
 
@@ -65,7 +67,7 @@ class UserService {
 
     // Get user by ID - simple query
     async getUserById(userId) {
-        const user = await prisma.user.findUnique({
+        const user = await UserDB.findUnique({
             where: { id: userId },
         });
 
@@ -79,7 +81,7 @@ class UserService {
 
     // Get all users - simple query
     async getAllUsers() {
-        const users = await prisma.user.findMany({
+        const users = await UserDB.findMany({
             select: {
                 id: true,
                 first_name: true,
@@ -95,7 +97,7 @@ class UserService {
 
     // Get users by role - simple query
     async getUsersByRole(role) {
-        const users = await prisma.user.findMany({
+        const users = await UserDB.findMany({
             where: {
                 role: role.toUpperCase(),
             },
@@ -121,7 +123,7 @@ class UserService {
             dataToUpdate.password = await hashPassword(password);
         }
 
-        const user = await prisma.user.update({
+        const user = await UserDB.update({
             where: { id: userId },
             data: dataToUpdate,
         });
@@ -132,7 +134,7 @@ class UserService {
 
     // Delete user - simple query
     async deleteUser(userId) {
-        await prisma.user.delete({
+        await UserDB.delete({
             where: { id: userId },
         });
         return { message: "User deleted successfully" };

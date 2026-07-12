@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 const modulesPath = path.resolve(__dirname, "../");
 
 // Folders to skip (non-feature folders)
-const skipFolders = ["config", "routes", "utils", "middlewares"];
+const skipFolders = ["config", "routes", "utils", "middlewares", "core"];
 
 // Read all folders in src/
 const folders = fs.readdirSync(modulesPath, { withFileTypes: true })
