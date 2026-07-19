@@ -2,6 +2,23 @@ import BaseController from "../core/BaseController.js";
 import UserService from "./UserService.js";
 
 class UserController extends BaseController {
+    constructor() {
+        super();
+
+        // Bind instance methods for Express route handlers
+        this.register = this.register.bind(this);
+        this.login = this.login.bind(this);
+        this.getUserById = this.getUserById.bind(this);
+        this.getAllUsers = this.getAllUsers.bind(this);
+        this.getUsersByRole = this.getUsersByRole.bind(this);
+        this.updateUser = this.updateUser.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
+    }
+
+    // Bind controller methods so `this` refers to the controller instance
+    // when Express invokes them as route handlers. 
+
+    // prototype methods for user operations
     async register(req, res) {
         try {
             const result = await UserService.registerUser(req.body);

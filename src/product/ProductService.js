@@ -1,38 +1,38 @@
 import prisma from "../config/prisma.js";
 import { slugify } from "../utils/slugify.js";
 
-const CategoryDB = prisma.category;
+const ProductDB = prisma.product;
 
 // TODO: make it generic and reusable for other services
-const parseCategoryId = (id) => {
+const parseProductId = (id) => {
     const parsedId = Number(id);
 
     if (!Number.isInteger(parsedId) || parsedId <= 0) {
-        throw new Error("Invalid category id");
+        throw new Error("Invalid product id");
     }
 
     return parsedId;
 };
 
-class CategoryService {
-    // Create category
+class ProductService {
+    // Create product
     async create(data) {
         if (!data?.name || !String(data.name).trim()) {
-            throw new Error("Category name is required");
+            throw new Error("Product name is required");
         }
 
         const name = String(data.name).trim();
         const slug = slugify(name);
 
-        const existingCategory = await CategoryDB.findUnique({
+        const existingProduct = await ProductDB.findUnique({
             where: { slug },
         });
 
-        if (existingCategory) {
-            throw new Error("Category already exists");
+        if (existingProduct) {
+            throw new Error("Product already exists");
         }
 
-        return await CategoryDB.create({
+        return await ProductDB.create({
             data: {
                 name,
                 slug,
@@ -41,38 +41,38 @@ class CategoryService {
         });
     }
 
-    // Get all categories
+    // Get all products
     async list() {
-        return await CategoryDB.findMany({
+        return await ProductDB.findMany({
             orderBy: {
                 created_at: "desc",
             },
         });
     }
 
-    // Get category by id
+    // Get product by id
     async get(id) {
-        const categoryId = parseCategoryId(id);
+        const productId = parseProductId(id);
 
-        return await CategoryDB.findUnique({
+        return await ProductDB.findUnique({
             where: {
-                id: categoryId,
+                id: productId,
             },
         });
     }
 
-    // Update category
+    // Update product
     async update(id, data) {
-        const categoryId = parseCategoryId(id);
+        const productId = parseProductId(id);
 
-        const existingCategory = await CategoryDB.findUnique({
+        const existingProduct = await ProductDB.findUnique({
             where: {
-                id: categoryId,
+                id: productId,
             },
         });
 
-        if (!existingCategory) {
-            throw new Error("Category not found");
+        if (!existingProduct) {
+            throw new Error("Product not found");
         }
 
         const updateData = {};
@@ -87,41 +87,41 @@ class CategoryService {
         }
 
         if (Object.keys(updateData).length === 0) {
-            throw new Error("No valid category fields provided");
+            throw new Error("No valid Product fields provided");
         }
 
-        return await CategoryDB.update({
+        return await ProductDB.update({
             where: {
-                id: categoryId,
+                id: productId,
             },
             data: updateData,
         });
     }
 
-    // Delete category
+    // Delete product
     async remove(id) {
-        const categoryId = parseCategoryId(id);
+        const productId = parseProductId(id);
 
-        const existingCategory = await CategoryDB.findUnique({
+        const existingProduct = await ProductDB.findUnique({
             where: {
-                id: categoryId,
+                id: productId,
             },
         });
 
-        if (!existingCategory) {
-            throw new Error("Category not found");
+        if (!existingProduct) {
+            throw new Error("Product not found");
         }
 
-        await CategoryDB.delete({
+        await ProductDB.delete({
             where: {
-                id: categoryId,
+                id: productId,
             },
         });
 
         return {
-            message: "Category deleted successfully",
+            message: "Product deleted successfully",
         };
     }
 }
 
-export default new CategoryService();
+export default new ProductService();

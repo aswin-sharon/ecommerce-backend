@@ -1,7 +1,7 @@
 import BaseController from "../core/BaseController.js";
-import CategoryService from "./CategoryService.js";
+import ProductService from "./ProductService.js";
 
-class CategoryController extends BaseController {
+class ProductController extends BaseController {
     constructor() {
         super();
 
@@ -13,10 +13,10 @@ class CategoryController extends BaseController {
         this.remove = this.remove.bind(this);
     }
 
-    // prototype methods for category operations
+    // prototype methods for product operations
     async create(req, res) {
         try {
-            const result = await CategoryService.create(req.body);
+            const result = await ProductService.create(req.body);
             return this.success(res, result, 201);
         } catch (err) {
             return this.error(res, err);
@@ -25,7 +25,7 @@ class CategoryController extends BaseController {
 
     async list(req, res) {
         try {
-            const result = await CategoryService.list();
+            const result = await ProductService.list();
             return this.success(res, result);
         } catch (err) {
             return this.error(res, err);
@@ -34,10 +34,10 @@ class CategoryController extends BaseController {
 
     async get(req, res) {
         try {
-            const result = await CategoryService.get(req.params.id);
+            const result = await ProductService.get(req.params.id);
 
             if (!result) {
-                return this.error(res, "Category not found", 404);
+                return this.error(res, "Product not found", 404);
             }
 
             return this.success(res, result);
@@ -48,23 +48,23 @@ class CategoryController extends BaseController {
 
     async update(req, res) {
         try {
-            const result = await CategoryService.update(req.params.id, req.body);
+            const result = await ProductService.update(req.params.id, req.body);
             return this.success(res, result);
         } catch (err) {
-            const statusCode = err.message === "Category not found" ? 404 : 400;
+            const statusCode = err.message === "Product not found" ? 404 : 400;
             return this.error(res, err, statusCode);
         }
     }
 
     async remove(req, res) {
         try {
-            const result = await CategoryService.remove(req.params.id);
+            const result = await ProductService.remove(req.params.id);
             return this.success(res, result);
         } catch (err) {
-            const statusCode = err.message === "Category not found" ? 404 : 400;
+            const statusCode = err.message === "Product not found" ? 404 : 400;
             return this.error(res, err, statusCode);
         }
     }
 }
 
-export default new CategoryController();
+export default new ProductController();
