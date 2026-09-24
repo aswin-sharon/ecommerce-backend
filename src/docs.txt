@@ -1,0 +1,1 @@
+ORM: sequelize vs prisma
